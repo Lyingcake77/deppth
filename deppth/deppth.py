@@ -80,7 +80,7 @@ def pack(source_dir, package, *entries, logger=lambda s: None):
       logger(entry.name)
       manifest_entries.append(entry)
   
-  with PackageWriter(target, compressor='lz4') as pkg_writer, PackageWriter(f'{target}_manifest') as manifest_writer:
+  with PackageWriter(target) as pkg_writer, PackageWriter(f'{target}_manifest') as manifest_writer:
     for manifest_entry in manifest_entries:
       entry_name = manifest_entry.name.split('\\')[-1]
       entry_sheet_path = os.path.join(source, 'textures', 'atlases', f'{entry_name}.png')

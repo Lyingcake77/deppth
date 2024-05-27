@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from .utils import requires
 import os
+from .lz import decompressor, normal_compressor
 
 try: import lz4.block
 except ImportError: pass
@@ -173,12 +174,15 @@ class _Lz4ChunkProcessor(_CompressedChunkProcessor):
   is required to use this chunk processor.
   """
   def compress(self, chunk):
-    """Compresses a block of data using LZ4 compression."""
-    return lz4.block.compress(chunk, mode='high_compression', store_size=False)
+    """Compresses a block of data using LZ4 compression.""" 
+    return bytes(normal_compressor(chunk,'', True))
+    # return lz4.block.compress(chunk, mode='high_compression', store_size=False)
 
   def decompress(self, chunk, chunk_size):
     """Decompresses an LZ4-compressed block of data, zero-filling to chunk_size."""
-    return lz4.block.decompress(chunk, uncompressed_size=chunk_size).ljust(chunk_size, b'\x00')
+
+    return bytes(decompressor(chunk,'', True))
+    # return lz4.block.decompress(chunk, uncompressed_size=chunk_size).ljust(chunk_size, b'\x00')
 
 @requires('lzf')
 @chunkprocessor('lzf', b'\x40')
